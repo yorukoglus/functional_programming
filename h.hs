@@ -57,8 +57,20 @@ get__it []     _ _  = []
 get__it (x:xs) w ws = (getIter (snd x) (w++[fst(x)]) ws) ++ get__it xs w ws
 
 prefix :: Word -> Trie -> Maybe [Word]
-prefix = undefined
+prefix [c]    t = case M.lookup c ts of
+                   Nothing -> Nothing
+                   Just t' -> Just $ getWords t'
+                   where
+                    ts = children t
+prefix (c:cs) t = case M.lookup c ts of
+                   Nothing -> Nothing
+                   Just t' -> prefix cs t'
+                   where
+                    ts = children t
 
+add_prefix :: [Word] -> Word -> [Word]
+add_prefix [] _ = []
+add_prefix (w:ws) str = (([str]++[w])++(add_prefix ws str))
 
 main :: IO ()
 main = do 
@@ -98,9 +110,13 @@ mainloop in_t =
          putStrLn "New word is added!\n------------------------------"
          mainloop new_t
      "f" -> do
+         putStrLn "Enter word/prefix:"
          str <- getLine
-         let a = prefix str in_t
-         putStrLn "did not do yet"
+         let Just a = prefix str in_t
+         let b = add_prefix a str
+         print $ b
+         putStrLn "------------------------------"
+         mainloop in_t
      "p" -> do 
          mapM_ print $ getWords in_t
          putStrLn "------------------------------"
@@ -108,4 +124,3 @@ mainloop in_t =
      otherwise -> do 
          putStrLn "Input is incorrect!\n------------------------------"
          mainloop in_t
-    
