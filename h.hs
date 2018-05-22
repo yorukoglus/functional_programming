@@ -41,10 +41,6 @@ search (c:cs) t = case M.lookup c ts of
                     ts = children t
 
 
-keyList :: [(k,l)] -> [k]
-keyList ts = fst((unzip ts))
-
-
 getWords :: Trie -> [Word]
 getWords t =(getIter t "" [])
   
@@ -60,13 +56,9 @@ get__it :: [(Char,Trie)] -> Word -> [Word] -> [Word]
 get__it []     _ _  = []
 get__it (x:xs) w ws = (getIter (snd x) (w++[fst(x)]) ws) ++ get__it xs w ws
 
-prefix :: String -> Trie -> IO ()
+prefix :: Word -> Trie -> Maybe [Word]
 prefix = undefined
 
-
-getInput :: IO String
-getInput = do inp <- getLine
-              return inp
 
 main :: IO ()
 main = do 
@@ -77,6 +69,7 @@ main = do
     let t = insertList $ lines contents
     mainloop t
     hClose handle
+
 
 mainloop :: Trie -> IO ()
 mainloop in_t = 
@@ -106,9 +99,10 @@ mainloop in_t =
          mainloop new_t
      "f" -> do
          str <- getLine
-         prefix str in_t
+         let a = prefix str in_t
+         putStrLn "did not do yet"
      "p" -> do 
-         print $ getWords in_t
+         mapM_ print $ getWords in_t
          putStrLn "------------------------------"
          mainloop in_t
      otherwise -> do 
