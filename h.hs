@@ -1,5 +1,10 @@
-import qualified Data.Map as M --(can be shortened)
-import qualified Data.Foldable as F
+-------------------------
+--   SAMET YÖRÜKOĞLU   --
+--     150140125       --
+-- Trie Implementation --
+--    Term Project     --
+-------------------------
+import qualified Data.Map as M 
 import Data.Maybe
 import System.Environment
 import System.IO
@@ -40,22 +45,24 @@ keyList :: [(k,l)] -> [k]
 keyList ts = fst((unzip ts))
 
 
-getWords :: Trie -> Word
-getWords t = concat $ getIter t []
-
+getWords :: Trie -> [Word]
+getWords t =(getIter t "" [])
   
-getIter :: Trie -> [Word] -> [Word]
-getIter t ws = case M.lookup c ts of 
- Just t' -> if (end t'==True) then [[c]]++ws else (getIter t' [[c]]++ws)
- Nothing -> ws
+getIter :: Trie -> Word -> [Word] -> [Word]
+getIter t w ws = case end t of 
+ True  -> if ((length list) >0) then (get__it list w (w:ws)) else (w:ws) 
+ False -> get__it list w ws
  where
-  ts = children t
-  l@(c:cs)=keyList (M.toList ts)
+   ts = children t
+   list = M.toList ts
 
-find_prefix = undefined
-  
-print_trie :: Trie -> IO ()
-print_trie t = print $ M.showTree (children t)
+get__it :: [(Char,Trie)] -> Word -> [Word] -> [Word]
+get__it []     _ _  = []
+get__it (x:xs) w ws = (getIter (snd x) (w++[fst(x)]) ws) ++ get__it xs w ws
+
+prefix :: String -> Trie -> IO ()
+prefix = undefined
+
 
 getInput :: IO String
 getInput = do inp <- getLine
@@ -97,8 +104,13 @@ mainloop in_t =
          let new_t = insert str in_t
          putStrLn "New word is added!\n------------------------------"
          mainloop new_t
-     "f" -> find_prefix
-     "p" -> print_trie in_t
+     "f" -> do
+         str <- getLine
+         prefix str in_t
+     "p" -> do 
+         print $ getWords in_t
+         putStrLn "------------------------------"
+         mainloop in_t
      otherwise -> do 
          putStrLn "Input is incorrect!\n------------------------------"
          mainloop in_t
