@@ -9,6 +9,7 @@ import Data.Maybe
 import System.Environment
 import System.IO
 import Prelude hiding (Word)
+import Data.List hiding (insert)
 data Trie = Trie {end :: Bool, children :: M.Map Char Trie}
             deriving (Show,Read)
 type Word = String
@@ -114,11 +115,11 @@ mainloop in_t =
          str <- getLine
          let Just a = prefix str in_t
          let b = add_prefix a str
-         print $ b
+         mapM_ print $ b
          putStrLn "------------------------------"
          mainloop in_t
      "p" -> do 
-         mapM_ print $ getWords in_t
+         mapM_ print $ nub $ getWords in_t
          putStrLn "------------------------------"
          mainloop in_t
      otherwise -> do 
