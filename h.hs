@@ -70,7 +70,7 @@ prefix (c:cs) t = case M.lookup c ts of
 
 add_prefix :: [Word] -> Word -> [Word]
 add_prefix [] _ = []
-add_prefix (w:ws) str = (([str]++[w])++(add_prefix ws str))
+add_prefix (w:ws) str = [(concat [str,w])]++(add_prefix ws str)
 
 main :: IO ()
 main = do 
